@@ -11,6 +11,9 @@
     "format": "prettier --write \"src/**/*.{ts,tsx,js,jsx,css,md,json}\""
   },
   "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
+    "@mui/material": "^7.3.2",
     "@tailwindcss/vite": "^4.1.13",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
