@@ -1,3 +1,5 @@
+// src/layouts/MainLayout.tsx
+import React, { Suspense } from "react";
 import { NavLink, Outlet } from 'react-router-dom'
 import Navbar from '../components/Navbar/Navbar'
 import VideoHero from '../components/VideoHero/VideoHero'
@@ -7,6 +9,8 @@ import heart from '../assets/heart.svg'
 import skethascopre from '../assets/stethoscope.svg'
 import file from '../assets/file.svg'
 import "../globals.css"
+const ScrollHandler = React.lazy(() => import("../components/ScrollHandler"));
+
 export default function MainLayout() {
   const cards = [
     {
