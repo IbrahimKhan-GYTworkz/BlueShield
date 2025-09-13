@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="41" height="39.509" viewBox="0 0 41 39.509">
+  <g id="stethoscope_1_" data-name="stethoscope (1)" transform="translate(-1 -1)">
+    <path id="Path_40902" data-name="Path 40902" d="M11,2V5.948" transform="translate(8.768)" fill="none" stroke="#0053cc" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+    <path id="Path_40903" data-name="Path 40903" d="M5,2V5.948" transform="translate(2.923)" fill="none" stroke="#0053cc" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+    <path id="Path_40904" data-name="Path 40904" d="M7.923,3H5.948A3.948,3.948,0,0,0,2,6.948v7.9a11.845,11.845,0,1,0,23.69,0v-7.9A3.948,3.948,0,0,0,21.742,3H19.768" transform="translate(0 0.974)" fill="none" stroke="#0053cc" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+    <path id="Path_40905" data-name="Path 40905" d="M8,17.923a11.845,11.845,0,1,0,23.69,0V12" transform="translate(5.845 9.742)" fill="none" stroke="#0053cc" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+    <ellipse id="Ellipse_1" data-name="Ellipse 1" cx="3.5" cy="4" rx="3.5" ry="4" transform="translate(34 14)" fill="none" stroke="#0053cc" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+  </g>
+</svg>

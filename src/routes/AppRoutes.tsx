@@ -1,6 +1,7 @@
 import { Suspense, lazy } from "react";
 import { Route, Routes } from "react-router-dom";
 import MainLayout from "../layouts/MainLayout";
+import "../globals.css"
 
 const Home = lazy(() => import("../pages/Homepage/Homepage"));
 const QueryMain = lazy(() => import("../pages/Query/QueryMain"));

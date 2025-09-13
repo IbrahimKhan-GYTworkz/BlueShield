@@ -1,7 +1,10 @@
 /* src/globals.css */
 @import "tailwindcss";
 /* Tailwind layers */
-
+/* @tailwind base;
+@tailwind components;
+@tailwind utilities; */
+@import "tailwindcss";
 
 /* Custom CSS variables (light/dark mode ready) */
 :root {
