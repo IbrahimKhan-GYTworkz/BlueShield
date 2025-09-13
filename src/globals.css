@@ -1,9 +1,7 @@
 /* src/globals.css */
-
+@import "tailwindcss";
 /* Tailwind layers */
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+
 
 /* Custom CSS variables (light/dark mode ready) */
 :root {
@@ -24,6 +22,9 @@
   --color-link-button: #0053CC;
   --color-icon: #0053CC;
   --color-other-border: #E5E5E5;
+
+  
+
 }
 
 .dark {
@@ -78,3 +79,8 @@ p {
   white-space: nowrap;
   border: 0;
 }
+
+
+.quick-action-btn {
+  @apply h-12 rounded-lg border border-gray-200 bg-transparent text-sm opacity-100;
+    }

@@ -1,4 +1,8 @@
+// src/layouts/MainLayout.tsx
+import React, { Suspense } from "react";
 import { NavLink, Outlet } from "react-router-dom";
+
+const ScrollHandler = React.lazy(() => import("../components/ScrollHandler"));
 
 export default function MainLayout() {
   return (
@@ -9,7 +13,9 @@ export default function MainLayout() {
             to="/"
             end
             className={({ isActive }) =>
-              `text-button-link font-poppins ${isActive ? "font-semibold underline" : ""}`
+              `text-button-link font-poppins ${
+                isActive ? "font-semibold underline" : ""
+              }`
             }
           >
             Home
@@ -17,7 +23,9 @@ export default function MainLayout() {
           <NavLink
             to="/about"
             className={({ isActive }) =>
-              `text-button-link font-poppins ${isActive ? "font-semibold underline" : ""}`
+              `text-button-link font-poppins ${
+                isActive ? "font-semibold underline" : ""
+              }`
             }
           >
             About
@@ -25,7 +33,11 @@ export default function MainLayout() {
         </nav>
       </header>
 
-      <main className="p-6">
+      <main className="p-2">
+        {/* Suspense required for React.lazy */}
+        <Suspense fallback={null}>
+          <ScrollHandler />
+        </Suspense>
         <Outlet />
       </main>
     </>
