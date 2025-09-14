@@ -20,7 +20,7 @@ import MicOffIcon from "@mui/icons-material/MicOff";
 import SendIcon from "@mui/icons-material/Send";
 import type { ContentBlock } from "../../types/contentBlocks";
 import ContentRenderer from "../ContentRenderer";
-import { 
+import SkeletonLoader, { 
   DoctorCardSkeleton, 
   TextContentSkeleton, 
   CardGridSkeleton, 
@@ -43,7 +43,7 @@ interface Props {
   isLoading: boolean;
   micActive: boolean;
   onToggleMic: () => void;
-  inputRef: React.RefObject<HTMLInputElement>;
+  inputRef: React.RefObject<HTMLInputElement | null>;
   getPlaceholderText: () => string;
   isExtraSmall: boolean;
   isSmall: boolean;
