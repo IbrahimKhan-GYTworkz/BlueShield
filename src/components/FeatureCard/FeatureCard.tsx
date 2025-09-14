@@ -22,29 +22,29 @@ const FeatureCard: React.FC<FeatureCardProps> = ({
 }) => {
   return (
     <div className="bg-white rounded-2xl shadow-[0px_3px_6px_#0000000D] 
-                    p-4 sm:p-6 flex flex-col hover:shadow-lg 
-                    transition-shadow duration-300 h-full w-full">
+                    p-6 flex flex-col hover:shadow-lg 
+                    transition-shadow duration-300 w-[260px] h-[320px] mx-auto overflow-hidden mb-6">
       {/* Top Icon */}
-      <div className="w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center mb-4">
-        <img src={icon} alt="icon" className="w-6 h-6 sm:w-[29px] sm:h-[37px]" />
+      <div className="w-10 h-10 flex items-center justify-center mb-3 flex-shrink-0">
+        <img src={icon} alt="icon" className="w-6 h-6" />
       </div>
 
       {/* Middle content area */}
-      <div className="flex-1 flex flex-col justify-start space-y-3">
-        <h3 className="text-base sm:text-lg font-semibold">{title}</h3>
-        <p className="text-[#6F7070] text-sm sm:text-[13px] md:text-base">
+      <div className="flex-1 flex flex-col justify-start space-y-2 min-h-0">
+        <h3 className="text-base font-semibold leading-tight">{title}</h3>
+        <p className="text-[#6F7070] text-xs leading-relaxed">
           {description}
         </p>
 
-        <ul className="space-y-2 text-sm sm:text-base text-gray-600">
+        <ul className="space-y-1.5 text-xs text-gray-600 flex-1 min-h-0">
           {features.map((item, idx) => (
             <li key={idx} className="flex items-start space-x-2">
               <img
                 src={tick}
                 alt="tick"
-                className="w-3 h-3 sm:w-[11px] sm:h-[11px] mt-[6px]"
+                className="w-2.5 h-2.5 mt-0.5 flex-shrink-0"
               />
-              <span className="text-[#6F7070] text-sm sm:text-[13px] md:text-base">
+              <span className="text-[#6F7070] text-xs leading-relaxed">
                 {item}
               </span>
             </li>
@@ -53,13 +53,13 @@ const FeatureCard: React.FC<FeatureCardProps> = ({
       </div>
 
       {/* Bottom link */}
-      <div className="mt-4 ml-4">
+      <div className="mt-3 flex-shrink-0 pl-4">
         <a
           href={linkUrl}
-          className="text-blue-600 font-semibold flex items-center space-x-1 text-sm sm:text-base"
+          className="text-blue-600 font-semibold flex items-center space-x-1 text-xs"
         >
           <span>{linkLabel}</span>
-          <ArrowUpRight className="w-4 h-4" />
+          <ArrowUpRight className="w-3 h-3" />
         </a>
       </div>
     </div>

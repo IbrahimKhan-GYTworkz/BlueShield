@@ -1,14 +1,6 @@
-import {
-  Box,
-  Button,
-  Card,
-  CardContent,
-  Typography,
-  useMediaQuery,
-  useTheme,
-} from "@mui/material";
-import React from "react";
-import type { CardBlock } from "../../types/contentBlocks";
+import { Box, Button, Card, CardContent, Typography, useMediaQuery, useTheme } from '@mui/material'
+import React from 'react'
+import type { CardBlock } from '../../types/contentBlocks'
 
 const CardBlockComp: React.FC<CardBlock> = ({
   icon: Icon,
@@ -16,86 +8,69 @@ const CardBlockComp: React.FC<CardBlock> = ({
   subtitle,
   metadata,
   description,
+  status,
   actions,
 }) => {
-  const theme = useTheme();
-  const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
-  const isMedium = useMediaQuery(theme.breakpoints.between("sm", "md"));
-  const isLarge = useMediaQuery(theme.breakpoints.up("lg"));
-  const isExtraSmall = useMediaQuery(theme.breakpoints.down(400));
+  const theme = useTheme()
+  const isSmall = useMediaQuery(theme.breakpoints.down('sm'))
+  const isMedium = useMediaQuery(theme.breakpoints.between('sm', 'md'))
+  const isExtraSmall = useMediaQuery(theme.breakpoints.down(400))
 
   return (
     <Card
       variant="outlined"
       sx={{
-        borderRadius: { xs: 1, sm: 2, md: 3 },
-        my: { xs: 1, sm: 1.5, md: 2, lg: 2.5 },
-        mx: { xs: 0.5, sm: 0 },
+        borderRadius: 2,
         boxShadow: 0,
-        overflow: "visible", // Changed from "hidden" to prevent clipping
-        width: "100%",
-        maxWidth: { xs: "100%", sm: "100%", md: "100%", lg: "100%" }, // Responsive maxWidth
-        transition: "all 0.2s ease",
-        "&:hover": {
-          boxShadow: { xs: 0, sm: 1 },
-          transform: { xs: "none", sm: "translateY(-1px)" },
+        overflow: 'hidden',
+        width: '100%',
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        transition: 'all 0.2s ease',
+        '&:hover': {
+          boxShadow: 1,
+          transform: 'translateY(-1px)',
         },
       }}
     >
       <CardContent
         sx={{
-          p: {
-            xs: 1.25,
-            sm: 1.75,
-            md: 2.25,
-            lg: 2.5,
-            xl: 3,
-          },
-          "&:last-child": {
-            pb: {
-              xs: 1.25,
-              sm: 1.75,
-              md: 2.25,
-              lg: 2.5,
-              xl: 3,
-            },
+          p: 1.5,
+          flex: 1,
+          display: 'flex',
+          flexDirection: 'column',
+          '&:last-child': {
+            pb: 1.5,
           },
         }}
       >
         <Box
           sx={{
-            display: "flex",
-            flexDirection: {
-              xs: "column",
-              sm: "row",
-            },
-            alignItems: {
-              xs: "center",
-              sm: "flex-start",
-              md: "flex-start",
-            },
-            gap: { xs: 1.5, sm: 2, md: 2.5 },
+            display: 'flex',
+            flexDirection: 'row',
+            alignItems: 'flex-start',
+            gap: 1.5,
+            flex: 1,
+            minHeight: 0,
           }}
         >
           {/* Icon in rounded square */}
           {Icon && (
             <Box
               sx={{
-                width: { xs: 32, sm: 36, md: 40, lg: 44 },
-                height: { xs: 32, sm: 36, md: 40, lg: 44 },
-                bgcolor: "#e3f2fd",
+                width: 24,
+                height: 24,
+                bgcolor: '#e3f2fd',
                 borderRadius: { xs: 1, sm: 1.25, md: 1.5 },
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
                 flexShrink: 0,
                 mt: { xs: 0, sm: 0.5 }, // Small top margin for better alignment
               }}
             >
-              <Icon
-                size={isExtraSmall ? 16 : isSmall ? 18 : isMedium ? 20 : 22}
-                color="#1976d2"
-              />
+              <Icon size={16} color="#1976d2" />
             </Box>
           )}
 
@@ -104,62 +79,48 @@ const CardBlockComp: React.FC<CardBlock> = ({
             sx={{
               flex: 1,
               minWidth: 0,
-              width: "100%",
-              overflow: "hidden", // Prevent content from overflowing
+              display: 'flex',
+              flexDirection: 'column',
+              overflow: 'hidden',
             }}
           >
-            <Typography
-              variant="subtitle1"
-              sx={{
-                fontWeight: { xs: 600, md: 700 },
-                fontSize: {
-                  xs: "0.9rem",
-                  sm: "0.95rem",
-                  md: "1.05rem",
-                  lg: "1.1rem",
-                  xl: "1.2rem",
-                },
-                lineHeight: { xs: 1.3, sm: 1.4 },
-                mb:
-                  subtitle || metadata || description
-                    ? { xs: 0.4, sm: 0.5 }
-                    : 0,
-                wordBreak: "break-word",
-                overflowWrap: "break-word", // Ensure long words break properly
-                textAlign: { xs: "center", sm: "left" }, // Simplified text alignment
-              }}
-            >
-              {title}
-            </Typography>
+             <Typography
+               variant="subtitle1"
+               sx={{
+                 fontWeight: { xs: 600, md: 700 },
+                 fontSize: '0.875rem',
+                 lineHeight: 1.3,
+                 mb: subtitle ? 0.25 : 0,
+                 wordBreak: 'break-word',
+                 overflowWrap: 'break-word',
+                 textAlign: 'left',
+               }}
+             >
+               {title}
+             </Typography>
 
-            {subtitle && (
-              <Typography
-                variant="body2"
-                color="text.secondary"
-                sx={{
-                  fontSize: {
-                    xs: "0.78rem",
-                    sm: "0.83rem",
-                    md: "0.875rem",
-                    lg: "0.9rem",
-                  },
-                  lineHeight: { xs: 1.3, sm: 1.4 },
-                  mb: metadata || description ? { xs: 0.4, sm: 0.5 } : 0,
-                  wordBreak: "break-word",
-                  overflowWrap: "break-word",
-                  textAlign: { xs: "center", sm: "left" },
-                }}
-              >
-                {subtitle}
-              </Typography>
-            )}
+             {subtitle && (
+               <Typography
+                 variant="body2"
+                 color="text.secondary"
+                 sx={{
+                   fontSize: '0.75rem',
+                   lineHeight: 1.3,
+                   mb: 1,
+                   wordBreak: 'break-word',
+                   overflowWrap: 'break-word',
+                   textAlign: 'left',
+                 }}
+               >
+                 {subtitle}
+               </Typography>
+             )}
 
             {/* Metadata */}
             {metadata && (
               <Box
                 sx={{
-                  mt: 0.5,
-                  mb: description ? { xs: 0.4, sm: 0.5 } : 0,
+                  mb: status ? 0.25 : 0,
                 }}
               >
                 {Object.entries(metadata).map(([k, v], index) => (
@@ -168,16 +129,12 @@ const CardBlockComp: React.FC<CardBlock> = ({
                     variant="body2"
                     color="text.secondary"
                     sx={{
-                      mt: index > 0 ? { xs: 0.25, sm: 0.3 } : 0,
-                      fontSize: {
-                        xs: "0.72rem",
-                        sm: "0.75rem",
-                        md: "0.8rem",
-                      },
-                      lineHeight: { xs: 1.3, sm: 1.4 },
-                      wordBreak: "break-word",
-                      overflowWrap: "break-word",
-                      textAlign: { xs: "center", sm: "left" },
+                      mt: index > 0 ? 0.125 : 0,
+                      fontSize: '0.7rem',
+                      lineHeight: 1.3,
+                      wordBreak: 'break-word',
+                      overflowWrap: 'break-word',
+                      textAlign: 'left',
                     }}
                   >
                     {v}
@@ -186,67 +143,86 @@ const CardBlockComp: React.FC<CardBlock> = ({
               </Box>
             )}
 
+            {/* Status */}
+            {status && (
+              <Typography
+                variant="body2"
+                sx={{
+                  fontSize: '0.7rem',
+                  lineHeight: 1.3,
+                  color: '#1976d2',
+                  fontWeight: 700,
+                  mb: description ? 0.25 : 0,
+                  wordBreak: 'break-word',
+                  overflowWrap: 'break-word',
+                  textAlign: 'left',
+                }}
+              >
+                {status}
+              </Typography>
+            )}
+
             {/* Description */}
             {description && (
               <Typography
                 variant="body2"
                 sx={{
-                  fontStyle: "italic",
-                  color: "#1976d2",
-                  mt: 0.5,
-                  mb: actions && actions.length > 0 ? { xs: 0.75, sm: 1 } : 0,
-                  fontSize: {
-                    xs: "0.72rem",
-                    sm: "0.75rem",
-                    md: "0.8rem",
-                  },
-                  lineHeight: { xs: 1.3, sm: 1.4 },
-                  wordBreak: "break-word",
-                  overflowWrap: "break-word",
-                  textAlign: { xs: "center", sm: "left" },
+                  fontStyle: 'italic',
+                  color: '#1976d2',
+                  mt: 0.25,
+                  mb: actions && actions.length > 0 ? 0.5 : 0,
+                  fontSize: '0.7rem',
+                  lineHeight: 1.3,
+                  wordBreak: 'break-word',
+                  overflowWrap: 'break-word',
+                  textAlign: 'left',
                 }}
               >
                 {description}
               </Typography>
             )}
 
-            {/* Actions */}
-            {actions && actions.length > 0 && (
-              <Box
-                sx={{
-                  mt: { xs: 1, sm: 1.25, md: 1.5 },
-                  display: "flex",
-                  gap: { xs: 0.75, sm: 1, md: 1.5 },
-                  flexDirection: { xs: "column", sm: "row" },
-                  flexWrap: "wrap",
-                  justifyContent: {
-                    xs: "center",
-                    sm: "flex-start",
-                  },
-                  width: "100%",
-                }}
-              >
+             {/* Actions */}
+             {actions && actions.length > 0 && (
+               <Box
+                 sx={{
+                   mt: 'auto',
+                   pt: 1,
+                   display: 'flex',
+                   gap: 0.5,
+                   flexDirection: 'row',
+                   flexWrap: 'wrap',
+                   justifyContent: 'flex-start',
+                 }}
+               >
                 {actions.map((a) => (
                   <Button
                     key={a.actionId}
                     variant="outlined"
                     color="primary"
-                    size={isExtraSmall ? "small" : isSmall ? "small" : "medium"}
+                    size="small"
+                    style={{
+                      textTransform: 'none',
+                      borderRadius: '50px', // ⬅️ makes it rounded
+                      fontSize: '0.7rem',
+                      padding: '2px 12px', // replaces px + py
+                      minWidth: 'auto',
+                      flex: '0 0 auto',
+                    }}
                     sx={{
-                      textTransform: "none",
-                      borderRadius: { xs: 1.5, sm: 2 },
-                      fontSize: {
-                        xs: "0.72rem",
-                        sm: "0.8rem",
-                        md: "0.875rem",
-                      },
-                      px: { xs: 1.5, sm: 2, md: 3 },
-                      py: { xs: 0.4, sm: 0.6, md: 0.75 },
-                      minWidth: { xs: "100%", sm: "auto" }, // Full width on xs, auto on larger
-                      flex: { xs: 1, sm: "0 0 auto" },
-                      "&:hover": {
-                        backgroundColor: "primary.main",
-                        color: "white",
+                      textTransform: 'none',
+                      borderRadius: 1.5,
+                      fontSize: '0.7rem',
+                      px: 1.5,
+                      py: 0.25,
+                      pt: 1, // ✅ extra top padding
+                      minWidth: 'auto',
+                      flex: '0 0 auto',
+                      color: 'black',
+                      fontWeight: 'bold', // ✅ makes text bold
+                      '&:hover': {
+                        backgroundColor: 'primary.main',
+                        color: 'white',
                       },
                     }}
                     onClick={() => console.log(`Action: ${a.actionId}`)}
@@ -260,7 +236,7 @@ const CardBlockComp: React.FC<CardBlock> = ({
         </Box>
       </CardContent>
     </Card>
-  );
-};
+  )
+}
 
-export default CardBlockComp;
+export default CardBlockComp

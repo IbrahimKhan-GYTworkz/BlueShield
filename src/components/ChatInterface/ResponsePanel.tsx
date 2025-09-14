@@ -7,10 +7,26 @@ import {
   Typography,
   useMediaQuery,
   useTheme,
+  TextField,
+  InputAdornment,
+  IconButton,
+  Stack,
+  CircularProgress,
 } from "@mui/material";
 import React from "react";
+import { MessageSquare, FileText, Play, Image } from "lucide-react";
+import MicIcon from "@mui/icons-material/Mic";
+import MicOffIcon from "@mui/icons-material/MicOff";
+import SendIcon from "@mui/icons-material/Send";
 import type { ContentBlock } from "../../types/contentBlocks";
 import ContentRenderer from "../ContentRenderer";
+import { 
+  DoctorCardSkeleton, 
+  TextContentSkeleton, 
+  CardGridSkeleton, 
+  SummaryTextSkeleton, 
+  ActionButtonsSkeleton 
+} from "../SkeletonLoader/SkeletonLoader";
 
 interface Props {
   queryText: string;
@@ -20,6 +36,17 @@ interface Props {
   sources?: ContentBlock[]; // you can treat sources as blocks too
   images?: string[]; // simple image urls
   videos?: string[]; // video urls or ids
+  input: string;
+  onInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onInputSubmit: (e?: React.FormEvent) => void;
+  onKeyPress: (e: React.KeyboardEvent) => void;
+  isLoading: boolean;
+  micActive: boolean;
+  onToggleMic: () => void;
+  inputRef: React.RefObject<HTMLInputElement>;
+  getPlaceholderText: () => string;
+  isExtraSmall: boolean;
+  isSmall: boolean;
 }
 
 const ResponsePanel: React.FC<Props> = ({
@@ -30,18 +57,26 @@ const ResponsePanel: React.FC<Props> = ({
   sources = [],
   images = [],
   videos = [],
+  input,
+  onInputChange,
+  onInputSubmit,
+  onKeyPress,
+  isLoading,
+  micActive,
+  onToggleMic,
+  inputRef,
+  getPlaceholderText,
+  isExtraSmall,
+  isSmall,
 }) => {
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
-  const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
-  const isExtraSmall = useMediaQuery("(max-width:400px)");
 
   return (
     <Box sx={{ width: "100%" }}>
       <Paper
         variant="outlined"
         sx={{
-          p: { xs: 1.5, sm: 2 },
+          p: { xs: 1, sm: 1.5 },
           borderRadius: 2,
           overflow: "hidden",
         }}
@@ -66,7 +101,7 @@ const ResponsePanel: React.FC<Props> = ({
 
         <Paper
           sx={{
-            p: { xs: 1, sm: 2 },
+            p: { xs: 0.5, sm: 1 },
             borderRadius: 2,
             overflow: "hidden",
           }}
@@ -93,10 +128,38 @@ const ResponsePanel: React.FC<Props> = ({
               },
             }}
           >
-            <Tab label="Answer" />
-            <Tab label="Sources" />
-            <Tab label="Video" />
-            <Tab label="Images" />
+            <Tab 
+              label={
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                  <MessageSquare size={16} />
+                  <span>Answer</span>
+                </Box>
+              } 
+            />
+            <Tab 
+              label={
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                  <FileText size={16} />
+                  <span>Sources</span>
+                </Box>
+              } 
+            />
+            <Tab 
+              label={
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                  <Play size={16} />
+                  <span>Video</span>
+                </Box>
+              } 
+            />
+            <Tab 
+              label={
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                  <Image size={16} />
+                  <span>Images</span>
+                </Box>
+              } 
+            />
           </Tabs>
 
           <Box
@@ -114,7 +177,132 @@ const ResponsePanel: React.FC<Props> = ({
                   },
                 }}
               >
-                <ContentRenderer blocks={answerBlocks} />
+                {isLoading ? (
+                  <Box>
+                    <TextContentSkeleton />
+                    <CardGridSkeleton />
+                    <SummaryTextSkeleton />
+                    <ActionButtonsSkeleton />
+                  </Box>
+                ) : (
+                  <ContentRenderer blocks={answerBlocks} />
+                )}
+                
+                {/* Input field inside answer card */}
+                <Box
+                  sx={{
+                    mt: 3,
+                  }}
+                >
+                  <Box
+                    component="form"
+                    onSubmit={onInputSubmit}
+                    sx={{
+                      position: "relative",
+                      border: "2px solid #e3f2fd",
+                      borderRadius: 2,
+                      backgroundColor: "white",
+                      minHeight: 60,
+                      display: "flex",
+                      alignItems: "center",
+                      px: 2,
+                      py: 1,
+                      "&:hover": {
+                        borderColor: "#bbdefb",
+                      },
+                      "&:focus-within": {
+                        borderColor: "#2196f3",
+                      },
+                    }}
+                  >
+                    {/* Text Input */}
+                    <TextField
+                      ref={inputRef}
+                      fullWidth
+                      multiline
+                      maxRows={4}
+                      value={input}
+                      onChange={onInputChange}
+                      onKeyPress={onKeyPress}
+                      placeholder="Ask me: Compare plans for my family | Do I need prior auth for an MRI? | Find a doctor near me"
+                      variant="standard"
+                      InputProps={{
+                        disableUnderline: true,
+                        sx: {
+                          fontSize: { xs: "0.875rem", sm: "1rem" },
+                          py: 1,
+                        },
+                      }}
+                      disabled={isLoading}
+                      sx={{
+                        flex: 1,
+                        "& .MuiInputBase-root": {
+                          "&:before": {
+                            display: "none",
+                          },
+                          "&:after": {
+                            display: "none",
+                          },
+                        },
+                      }}
+                    />
+
+                    {/* Action Buttons */}
+                    <Box
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 1,
+                        ml: 1,
+                      }}
+                    >
+                      <IconButton
+                        onClick={onToggleMic}
+                        disabled={isLoading}
+                        size="small"
+                        sx={{
+                          color: micActive ? "#ff4444" : "#9e9e9e",
+                          "&:hover": {
+                            backgroundColor: micActive ? "rgba(255, 68, 68, 0.1)" : "rgba(0, 0, 0, 0.04)",
+                          },
+                        }}
+                      >
+                        {micActive ? (
+                          <MicIcon sx={{ fontSize: 20 }} />
+                        ) : (
+                          <MicOffIcon sx={{ fontSize: 20 }} />
+                        )}
+                      </IconButton>
+                      
+                      <IconButton
+                        type="submit"
+                        disabled={!input.trim() || isLoading}
+                        size="small"
+                        sx={{
+                          background: input.trim()
+                            ? "#0053CC"
+                            : "#e0e0e0",
+                          color: input.trim() ? "white" : "#9e9e9e",
+                          minWidth: 40,
+                          minHeight: 40,
+                          borderRadius: 2,
+                          "&:hover": {
+                            background: input.trim() ? "#003d99" : "#d5d5d5",
+                          },
+                        }}
+                      >
+                        {isLoading ? (
+                          <CircularProgress
+                            size={16}
+                            sx={{ color: "inherit" }}
+                          />
+                        ) : (
+                          <SendIcon sx={{ fontSize: 18 }} />
+                        )}
+                      </IconButton>
+                    </Box>
+                  </Box>
+                </Box>
               </Box>
             )}
 
@@ -137,7 +325,14 @@ const ResponsePanel: React.FC<Props> = ({
                     },
                   }}
                 >
-                  <ContentRenderer blocks={sources} />
+                  {isLoading ? (
+                    <Box>
+                      <TextContentSkeleton />
+                      <TextContentSkeleton />
+                    </Box>
+                  ) : (
+                    <ContentRenderer blocks={sources} />
+                  )}
                 </Box>
               </Box>
             )}
@@ -154,7 +349,35 @@ const ResponsePanel: React.FC<Props> = ({
                 >
                   Videos
                 </Typography>
-                {videos.length === 0 ? (
+                {isLoading ? (
+                  <Box>
+                    <Box
+                      sx={{
+                        position: "relative",
+                        width: "100%",
+                        height: 0,
+                        paddingBottom: "56.25%", // 16:9 aspect ratio
+                        overflow: "hidden",
+                        borderRadius: 1,
+                        mb: 2,
+                      }}
+                    >
+                      <SkeletonLoader variant="rectangular" width="100%" height="100%" sx={{ position: "absolute", top: 0, left: 0 }} />
+                    </Box>
+                    <Box
+                      sx={{
+                        position: "relative",
+                        width: "100%",
+                        height: 0,
+                        paddingBottom: "56.25%", // 16:9 aspect ratio
+                        overflow: "hidden",
+                        borderRadius: 1,
+                      }}
+                    >
+                      <SkeletonLoader variant="rectangular" width="100%" height="100%" sx={{ position: "absolute", top: 0, left: 0 }} />
+                    </Box>
+                  </Box>
+                ) : videos.length === 0 ? (
                   <Typography
                     variant="body2"
                     color="text.secondary"
@@ -217,7 +440,36 @@ const ResponsePanel: React.FC<Props> = ({
                 >
                   Images
                 </Typography>
-                {images.length === 0 ? (
+                {isLoading ? (
+                  <Box
+                    sx={{
+                      display: "grid",
+                      gridTemplateColumns: {
+                        xs: "repeat(auto-fit, minmax(120px, 1fr))",
+                        sm: "repeat(auto-fit, minmax(160px, 1fr))",
+                        md: "repeat(auto-fit, minmax(200px, 1fr))",
+                      },
+                      gap: { xs: 1, sm: 1.5 },
+                      width: "100%",
+                    }}
+                  >
+                    {[1, 2, 3, 4].map((i) => (
+                      <Box
+                        key={i}
+                        sx={{
+                          position: "relative",
+                          width: "100%",
+                          height: 0,
+                          paddingBottom: "75%", // 4:3 aspect ratio
+                          overflow: "hidden",
+                          borderRadius: 1,
+                        }}
+                      >
+                        <SkeletonLoader variant="rectangular" width="100%" height="100%" sx={{ position: "absolute", top: 0, left: 0 }} />
+                      </Box>
+                    ))}
+                  </Box>
+                ) : images.length === 0 ? (
                   <Typography
                     variant="body2"
                     color="text.secondary"

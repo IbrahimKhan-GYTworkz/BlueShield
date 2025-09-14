@@ -2,9 +2,9 @@ import type { ContentBlock } from "../types/contentBlocks";
 
 export const priorAuthResponse: ContentBlock[] = [
     {
-        type: "text",
-        content:
-            "Prior authorization is required for certain procedures, medications, or services to ensure compliance before delivery.",
+        type: "header",
+        text: "Prior authorization is required for certain procedures, medications, or services to ensure medical necessity and coverage compliance before they are delivered to the patient. ",
+        level: 2,
     },
     {
         type: "table",

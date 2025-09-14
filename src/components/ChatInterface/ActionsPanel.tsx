@@ -22,7 +22,6 @@ interface Props {
 const ActionsPanel: React.FC<Props> = ({ actions }) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
-  const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
   const isExtraSmall = useMediaQuery("(max-width:400px)");
 
   return (
@@ -30,7 +29,7 @@ const ActionsPanel: React.FC<Props> = ({ actions }) => {
       <Paper
         variant="outlined"
         sx={{
-          p: { xs: 1.5, sm: 2 },
+          p: { xs: 1, sm: 1.5 },
           borderRadius: 2,
           height: { xs: "auto", lg: "100%" },
           minHeight: { xs: "auto", lg: 400 },
@@ -51,7 +50,7 @@ const ActionsPanel: React.FC<Props> = ({ actions }) => {
 
         <Paper
           sx={{
-            p: { xs: 1, sm: 1.5, md: 2 },
+            p: { xs: 0.5, sm: 1 },
             borderRadius: 2,
             flexGrow: 1,
             overflow: "hidden",
@@ -143,6 +142,7 @@ const ActionsPanel: React.FC<Props> = ({ actions }) => {
                         height: isExtraSmall ? 16 : 18,
                         marginLeft: isExtraSmall ? 0 : 5,
                         flexShrink: 0,
+                        color: "#2196f3", // Blue color
                       }}
                     />
                   }

@@ -3,6 +3,11 @@ import type { ContentBlock } from "../types/contentBlocks";
 
 export const doctorSearchResponse: ContentBlock[] = [
     {
+        type: "header",
+        text: "Here Are Some Nearby Doctors You Can Book Today",
+        level: 2,
+    },
+    {
         type: "card",
         icon: LucideStethoscope,
         title: "Dr. Sarah Lee",
@@ -11,6 +16,7 @@ export const doctorSearchResponse: ContentBlock[] = [
             Location: "San Francisco, CA",
             Distance: "4 miles away",
         },
+        status: "Accepting new patients",
         actions: [{ type: "action", label: "Book Appointment", actionId: "book-1" }],
     },
     {
@@ -22,6 +28,7 @@ export const doctorSearchResponse: ContentBlock[] = [
             Location: "Berkeley, CA",
             Distance: "7.2 miles away",
         },
+        status: "Telehealth option available",
         actions: [{ type: "action", label: "Book Appointment", actionId: "book-2" }],
     },
     {
@@ -33,12 +40,13 @@ export const doctorSearchResponse: ContentBlock[] = [
             Location: "Oakland, CA",
             Distance: "12 miles away",
         },
+        status: "In-network with your plan",
         actions: [{ type: "action", label: "Book Appointment", actionId: "book-3" }],
     },
     {
         type: "text",
         content:
-            "You've viewed 8 doctors matching your search within 10 miles. Several doctors are currently accepting new patients and have availability this week.",
+            "You've viewed 8 doctors matching your search within 10 miles. Most offer in-person appointments, and several support virtual visits. Several doctors are currently accepting new patients and have availability this week.",
     },
     {
         type: "action",

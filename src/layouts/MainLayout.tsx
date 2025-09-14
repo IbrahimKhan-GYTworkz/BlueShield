@@ -1,6 +1,5 @@
 // src/layouts/MainLayout.tsx
-import React, { Suspense } from "react";
-import { NavLink, Outlet } from 'react-router-dom'
+import { Outlet, useNavigate, useLocation } from 'react-router-dom'
 import Navbar from '../components/Navbar/Navbar'
 import VideoHero from '../components/VideoHero/VideoHero'
 import FeatureCard from '../components/FeatureCard/FeatureCard'
@@ -9,9 +8,11 @@ import heart from '../assets/heart.svg'
 import skethascopre from '../assets/stethoscope.svg'
 import file from '../assets/file.svg'
 import "../globals.css"
-const ScrollHandler = React.lazy(() => import("../components/ScrollHandler"));
 
 export default function MainLayout() {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const isHomePage = location.pathname === '/' || location.pathname === '/home';
   const cards = [
     {
       icon: sheild,
@@ -60,47 +61,57 @@ export default function MainLayout() {
   ]
   return (
     <>
-      <header>
+      <header className="sticky top-0 z-50">
         <Navbar />
       </header>
-      <>
-        <VideoHero />
-        {/* Main container with responsive padding */}
-        <div className="px-4 sm:px-8 md:px-12 lg:px-24 xl:px-36">
-          {/* Heading Section */}
-          <div className="mt-12 mb-8 flex flex-col items-center justify-center gap-4 text-center sm:mt-16 sm:mb-12 lg:mt-24">
-            <h1 className="text-2xl leading-snug font-bold sm:text-3xl lg:text-5xl">
-              Your Benefits. Your Care. One Conversation
-            </h1>
-            <div className="space-y-1 sm:space-y-2">
-              <p className="text-base text-[#707070] sm:text-lg lg:text-xl">
-                Skip the menus and forms
-              </p>
-              <p className="text-base text-[#707070] sm:text-lg lg:text-xl">
-                Just ask, we'll guide you with answers, tools, and next steps
-              </p>
+      <div className="transition-all duration-500 ease-in-out">
+        {isHomePage ? (
+          <div className="animate-fadeIn">
+            <VideoHero />
+            {/* Main container with responsive padding */}
+            <div className="px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16">
+            {/* Heading Section */}
+            <div className="mt-6 mb-8 flex flex-col items-center justify-center gap-4 text-center sm:mt-8 sm:mb-12 lg:mt-12">
+              <h1 className="text-lg leading-snug font-bold sm:text-xl lg:text-3xl">
+                Your Benefits. Your Care. One Conversation
+              </h1>
+              <div className="space-y-1 sm:space-y-2">
+                <p className="text-base text-[#707070] sm:text-lg lg:text-xl">
+                  Skip the menus and forms
+                </p>
+                <p className="text-base text-[#707070] sm:text-lg lg:text-xl">
+                  Just ask, we'll guide you with answers, tools, and next steps
+                </p>
+              </div>
+            </div>
+
+              {/* Cards Section */}
+              <div className="grid grid-cols-1 gap-12 sm:grid-cols-2 lg:grid-cols-4 justify-items-center max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              {cards.map((card, idx) => (
+                <FeatureCard key={idx} {...card} />
+              ))}
+            </div>
+
+            {/* CTA Section */}
+            <div className="py-12 flex flex-col items-center justify-center gap-6 sm:my-16">
+              <h1 className="text-center text-base font-medium sm:text-lg lg:text-xl">
+                Not sure where to start? Just ask me
+              </h1>
+              <button 
+                onClick={() => navigate('/ai')}
+                className="rounded-full border-2 border-[#306FB6] bg-white px-6 py-3 text-sm font-medium transition hover:bg-[#306FB6] hover:text-white sm:px-8 sm:py-4 sm:text-base"
+              >
+                Start a conversation
+              </button>
             </div>
           </div>
-
-          {/* Cards Section */}
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {cards.map((card, idx) => (
-              <FeatureCard key={idx} {...card} />
-            ))}
           </div>
-
-          {/* CTA Section */}
-          <div className="py-12 flex flex-col items-center justify-center gap-6 sm:my-16">
-            <h1 className="text-center text-base font-medium sm:text-lg lg:text-xl">
-              Not sure where to start? Just ask me
-            </h1>
-            <button className="rounded-full border-2 border-[#306FB6] bg-white px-6 py-3 text-sm font-medium transition hover:bg-[#306FB6] hover:text-white sm:px-8 sm:py-4 sm:text-base">
-              Start a conversation
-            </button>
+        ) : (
+          <div className="animate-fadeIn">
+            <Outlet />
           </div>
-        </div>
-      </>
-        <Outlet />
+        )}
+      </div>
     </>
   )
 }

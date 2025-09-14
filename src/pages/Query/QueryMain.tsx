@@ -1,5 +1,5 @@
 // pages/Query/QueryMain.tsx
-import ChatInterface from "../../components/ChatInterface/ChatInterface"; // Adjust path as needed
+import ChatInterface from "../../components/ChatInterface/ChatInterface";
 
 const QueryMain = () => {
   return (

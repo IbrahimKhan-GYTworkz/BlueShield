@@ -8,7 +8,8 @@ export type ContentBlock =
     | KeyValueBlock
     | ActionBlock
     | TextBlock
-    | TableBlock;
+    | TableBlock
+    | HeaderBlock;
 
 export interface CardBlock {
     type: "card";
@@ -17,6 +18,7 @@ export interface CardBlock {
     subtitle?: string;
     description?: string;
     metadata?: Record<string, string>;
+    status?: string;
     actions?: ActionBlock[];
 }
 
@@ -46,4 +48,10 @@ export interface TableBlock {
     type: "table";
     headers: string[];
     rows: string[][];
+}
+
+export interface HeaderBlock {
+    type: "header";
+    text: string;
+    level?: 1 | 2 | 3 | 4 | 5 | 6;
 }

@@ -13,7 +13,8 @@ export default function AppRoutes() {
       <Routes>
         <Route path="/" element={<MainLayout />}>
           <Route index element={<Home />} /> {/* path="/" */}
-          <Route path="query" element={<QueryMain />} />
+          <Route path="home" element={<Home />} />
+          <Route path="ai" element={<QueryMain />} />
           <Route path="*" element={<NotFound />} /> {/* catch-all */}
         </Route>
       </Routes>

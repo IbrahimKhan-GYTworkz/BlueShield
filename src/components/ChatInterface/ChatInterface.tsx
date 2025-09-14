@@ -34,6 +34,19 @@ import { doctorSearchResponse } from "../../constants/doctorSearchResponse";
 import { priorAuthResponse } from "../../constants/priorAuthResponse";
 import type { ContentBlock } from "../../types/contentBlocks";
 
+// Speech Recognition types
+interface SpeechRecognition extends EventTarget {
+  continuous: boolean;
+  interimResults: boolean;
+  lang: string;
+  start(): void;
+  stop(): void;
+  onstart: (() => void) | null;
+  onresult: ((event: any) => void) | null;
+  onerror: ((event: any) => void) | null;
+  onend: (() => void) | null;
+}
+
 interface Message {
   id: string;
   content: string;
@@ -44,7 +57,6 @@ interface Message {
 
 const ChatInterface: React.FC = () => {
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
   const isExtraSmall = useMediaQuery("(max-width:400px)");
 
@@ -54,6 +66,8 @@ const ChatInterface: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [micActive, setMicActive] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(true);
+  const [isListening, setIsListening] = useState(false);
+  const [speechSupported, setSpeechSupported] = useState(false);
 
   const [viewMode, setViewMode] = useState<"chat" | "response">("chat");
 
@@ -66,9 +80,51 @@ const ChatInterface: React.FC = () => {
   const [videoResults, setVideoResults] = useState<string[]>([]);
 
   const inputRef = useRef<HTMLInputElement>(null);
+  const recognitionRef = useRef<SpeechRecognition | null>(null);
+
+  // Initialize speech recognition
+  React.useEffect(() => {
+    if (typeof window !== 'undefined' && 'webkitSpeechRecognition' in window) {
+      const SpeechRecognition = (window as any).webkitSpeechRecognition;
+      const recognition = new SpeechRecognition();
+      
+      recognition.continuous = false;
+      recognition.interimResults = false;
+      recognition.lang = 'en-US';
+      
+      recognition.onstart = () => {
+        setIsListening(true);
+        setMicActive(true);
+      };
+      
+      recognition.onresult = (event: any) => {
+        const transcript = event.results[0][0].transcript;
+        setInput(transcript);
+        setIsListening(false);
+        setMicActive(false);
+        inputRef.current?.focus();
+      };
+      
+      recognition.onerror = (event: any) => {
+        console.error('Speech recognition error:', event.error);
+        setIsListening(false);
+        setMicActive(false);
+      };
+      
+      recognition.onend = () => {
+        setIsListening(false);
+        setMicActive(false);
+      };
+      
+      recognitionRef.current = recognition;
+      setSpeechSupported(true);
+    } else {
+      setSpeechSupported(false);
+    }
+  }, []);
 
   const suggestionQuestions = [
-    { id: "1", text: "Find in-network doctors nearby" },
+    { id: "1", text: "Find in-network doctors nearby." },
     { id: "2", text: "Prior authorization requirements for MRI" },
   ];
 
@@ -82,7 +138,31 @@ const ChatInterface: React.FC = () => {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) =>
     setInput(e.target.value);
 
-  const toggleMic = () => setMicActive((s) => !s);
+  const toggleMic = () => {
+    if (!speechSupported) {
+      alert('Speech recognition is not supported in this browser. Please use Chrome or Edge.');
+      return;
+    }
+
+    if (isListening) {
+      // Stop listening
+      if (recognitionRef.current) {
+        recognitionRef.current.stop();
+      }
+      setIsListening(false);
+      setMicActive(false);
+    } else {
+      // Start listening
+      if (recognitionRef.current) {
+        try {
+          recognitionRef.current.start();
+        } catch (error) {
+          console.error('Error starting speech recognition:', error);
+          setMicActive(false);
+        }
+      }
+    }
+  };
 
   // Static responses for now
   const chooseStaticResponse = (query: string): ContentBlock[] => {
@@ -212,10 +292,10 @@ const ChatInterface: React.FC = () => {
       }}
     >
       <Container
-        maxWidth="lg"
+        maxWidth="xl"
         sx={{
-          py: { xs: 2, sm: 3, md: 4 },
-          px: { xs: 1, sm: 2, md: 3 },
+          py: { xs: 1, sm: 2, md: 3 },
+          px: { xs: 0.5, sm: 1, md: 2 },
         }}
       >
         {/* Header only in chat mode */}
@@ -261,12 +341,16 @@ const ChatInterface: React.FC = () => {
           /* Response Mode: Two-panel layout */
           <Grid
             container
-            spacing={{ xs: 2, sm: 3 }}
+            spacing={{ xs: 1, sm: 2 }}
             sx={{
               flexDirection: { xs: "column", lg: "row" },
+              maxWidth: "100%",
             }}
           >
-            <Grid size={{ xs: 12, lg: 8 }} sx={{ order: { xs: 1, lg: 1 } }}>
+            <Grid size={{ xs: 12, lg: 9 }} sx={{ 
+              order: { xs: 1, lg: 1 },
+              pr: { xs: 0, lg: 1 },
+            }}>
               <ResponsePanel
                 queryText={queryText}
                 activeTab={activeTab}
@@ -275,116 +359,136 @@ const ChatInterface: React.FC = () => {
                 sources={sourcesBlocks}
                 images={imageResults}
                 videos={videoResults}
+                input={input}
+                onInputChange={handleInputChange}
+                onInputSubmit={handleSubmit}
+                onKeyPress={handleKeyPress}
+                isLoading={isLoading}
+                micActive={micActive}
+                onToggleMic={toggleMic}
+                inputRef={inputRef}
+                getPlaceholderText={getPlaceholderText}
+                isExtraSmall={isExtraSmall}
+                isSmall={isSmall}
               />
             </Grid>
-            <Grid size={{ xs: 12, lg: 4 }} sx={{ order: { xs: 2, lg: 2 } }}>
+            <Grid size={{ xs: 12, lg: 3 }} sx={{ 
+              order: { xs: 2, lg: 2 },
+              pl: { xs: 0, lg: 1 },
+            }}>
               <ActionsPanel actions={quickActions} />
             </Grid>
           </Grid>
         )}
 
-        {/* Chat Input always at bottom */}
-        <Box
-          sx={{
-            mt: { xs: 2, sm: 3, md: 4 },
-            position: viewMode === "response" ? "sticky" : "relative",
-            bottom: viewMode === "response" ? 0 : "auto",
-            zIndex: 10,
-            backgroundColor: "var(--color-background)",
-            pt: viewMode === "response" ? 2 : 0,
-          }}
-        >
-          <Paper
+        {/* Chat Input only in chat mode */}
+        {viewMode === "chat" && (
+          <Box
             sx={{
-              p: { xs: 1.5, sm: 2 },
-              borderRadius: 2,
-              boxShadow: viewMode === "response" ? 3 : 1,
+              mt: { xs: 2, sm: 3, md: 4 },
+              position: "relative",
+              zIndex: 10,
+              backgroundColor: "var(--color-background)",
             }}
           >
-            <Box
-              component="form"
-              onSubmit={handleSubmit}
+            <Paper
               sx={{
-                display: "flex",
-                gap: { xs: 0.5, sm: 1 },
-                alignItems: "flex-end",
-                flexDirection: isExtraSmall ? "column" : "row",
+                p: { xs: 1.5, sm: 2 },
+                borderRadius: 2,
+                boxShadow: 1,
               }}
             >
-              <TextField
-                ref={inputRef}
-                fullWidth
-                multiline
-                maxRows={isExtraSmall ? 3 : 4}
-                value={input}
-                onChange={handleInputChange}
-                onKeyPress={handleKeyPress}
-                placeholder={getPlaceholderText()}
-                variant="standard"
-                InputProps={{
-                  disableUnderline: true,
-                  startAdornment: !isExtraSmall && (
-                    <InputAdornment position="start">
-                      <SearchIcon sx={{ fontSize: { xs: 20, sm: 24 } }} />
-                    </InputAdornment>
-                  ),
-                  sx: {
-                    fontSize: { xs: "0.875rem", sm: "1rem" },
-                    px: { xs: 1, sm: 0 },
-                  },
-                }}
-                disabled={isLoading}
+              <Box
+                component="form"
+                onSubmit={handleSubmit}
                 sx={{
-                  mb: isExtraSmall ? 1 : 0,
-                }}
-              />
-
-              <Stack
-                direction="row"
-                spacing={{ xs: 0.5, sm: 1 }}
-                sx={{
-                  alignSelf: isExtraSmall ? "flex-end" : "auto",
-                  width: isExtraSmall ? "100%" : "auto",
-                  justifyContent: isExtraSmall ? "flex-end" : "flex-start",
+                  display: "flex",
+                  gap: { xs: 0.5, sm: 1 },
+                  alignItems: "flex-end",
+                  flexDirection: isExtraSmall ? "column" : "row",
                 }}
               >
+                <TextField
+                  ref={inputRef}
+                  fullWidth
+                  multiline
+                  maxRows={isExtraSmall ? 3 : 4}
+                  value={input}
+                  onChange={handleInputChange}
+                  onKeyPress={handleKeyPress}
+                  placeholder={getPlaceholderText()}
+                  variant="standard"
+                  InputProps={{
+                    disableUnderline: true,
+                    startAdornment: !isExtraSmall && (
+                      <InputAdornment position="start">
+                        <SearchIcon sx={{ fontSize: { xs: 20, sm: 24 } }} />
+                      </InputAdornment>
+                    ),
+                    sx: {
+                      fontSize: { xs: "0.875rem", sm: "1rem" },
+                      px: { xs: 1, sm: 0 },
+                    },
+                  }}
+                  disabled={isLoading}
+                  sx={{
+                    mb: isExtraSmall ? 1 : 0,
+                  }}
+                />
+
+                <Stack
+                  direction="row"
+                  spacing={{ xs: 0.5, sm: 1 }}
+                  sx={{
+                    alignSelf: isExtraSmall ? "flex-end" : "auto",
+                    width: isExtraSmall ? "100%" : "auto",
+                    justifyContent: isExtraSmall ? "flex-end" : "flex-start",
+                  }}
+                >
                 <IconButton
                   onClick={toggleMic}
-                  disabled={isLoading}
+                  disabled={isLoading || !speechSupported}
                   size={isExtraSmall ? "small" : "medium"}
+                  sx={{
+                    color: isListening ? "#ff4444" : "#9e9e9e",
+                    "&:hover": {
+                      backgroundColor: isListening ? "rgba(255, 68, 68, 0.1)" : "rgba(0, 0, 0, 0.04)",
+                    },
+                  }}
                 >
-                  {micActive ? (
+                  {isListening ? (
                     <MicIcon sx={{ fontSize: { xs: 18, sm: 24 } }} />
                   ) : (
                     <MicOffIcon sx={{ fontSize: { xs: 18, sm: 24 } }} />
                   )}
                 </IconButton>
-                <IconButton
-                  type="submit"
-                  disabled={!input.trim() || isLoading}
-                  size={isExtraSmall ? "small" : "medium"}
-                  sx={{
-                    background: input.trim()
-                      ? "var(--color-link-button)"
-                      : "var(--color-other-border)",
-                    color: input.trim() ? "white" : "var(--color-subtext)",
-                    minWidth: { xs: 36, sm: 40 },
-                    minHeight: { xs: 36, sm: 40 },
-                  }}
-                >
-                  {isLoading ? (
-                    <CircularProgress
-                      size={isExtraSmall ? 16 : 18}
-                      sx={{ color: "inherit" }}
-                    />
-                  ) : (
-                    <SendIcon sx={{ fontSize: { xs: 16, sm: 20 } }} />
-                  )}
-                </IconButton>
-              </Stack>
-            </Box>
-          </Paper>
-        </Box>
+                  <IconButton
+                    type="submit"
+                    disabled={!input.trim() || isLoading}
+                    size={isExtraSmall ? "small" : "medium"}
+                    sx={{
+                      background: input.trim()
+                        ? "var(--color-link-button)"
+                        : "var(--color-other-border)",
+                      color: input.trim() ? "white" : "var(--color-subtext)",
+                      minWidth: { xs: 36, sm: 40 },
+                      minHeight: { xs: 36, sm: 40 },
+                    }}
+                  >
+                    {isLoading ? (
+                      <CircularProgress
+                        size={isExtraSmall ? 16 : 18}
+                        sx={{ color: "inherit" }}
+                      />
+                    ) : (
+                      <SendIcon sx={{ fontSize: { xs: 16, sm: 20 } }} />
+                    )}
+                  </IconButton>
+                </Stack>
+              </Box>
+            </Paper>
+          </Box>
+        )}
 
         {viewMode === "chat" && (
           <>
